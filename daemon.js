@@ -254,4 +254,7 @@ function record(action, args = {}) {
 
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
-})();
+})().catch(err => {
+  console.error('daemon error:', err);
+  process.exit(1);
+});

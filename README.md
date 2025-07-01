@@ -4,10 +4,13 @@ A simple CLI tool to control a background browser using Playwright.
 
 ## Usage
 
-Install dependencies (requires Node.js):
+Install dependencies (requires Node.js 18+). After installing the CLI you must
+download the Playwright browser binaries. This is a one‑time step and works on
+Windows, Linux and macOS:
 
 ```bash
 npm install -g @halfjuice/br-cli
+npx playwright install
 ```
 
 ### Start the daemon
@@ -15,6 +18,8 @@ npm install -g @halfjuice/br-cli
 ```bash
 br start
 ```
+If starting the daemon fails (for example due to missing Playwright browsers),
+the CLI prints the error output so you can diagnose the issue.
 
 ### Navigate to a URL
 
