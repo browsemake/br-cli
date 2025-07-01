@@ -7,7 +7,7 @@ A simple CLI tool to control a background browser using Playwright.
 Install dependencies (requires Node.js):
 
 ```bash
-npm install
+npm install -g @halfjuice/br-cli
 ```
 
 ### Start the daemon
