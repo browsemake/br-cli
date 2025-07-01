@@ -46,13 +46,41 @@ program
       console.log('daemon already running');
       return;
     }
+
     const child = spawn(process.execPath, [path.join(__dirname, '../daemon.js')], {
       detached: true,
-      stdio: 'ignore'
+      stdio: ['ignore', 'pipe', 'pipe']
     });
-    fs.writeFileSync(PID_FILE, String(child.pid));
-    child.unref();
-    console.log('daemon started');
+
+    let stdout = '';
+    let stderr = '';
+
+    const timeout = setTimeout(() => {
+      console.error('daemon failed to start');
+      if (stderr.trim()) console.error(stderr.trim());
+      process.exit(1);
+    }, 5000);
+
+    child.stdout.on('data', data => {
+      stdout += data.toString();
+      if (stdout.includes('br daemon running')) {
+        clearTimeout(timeout);
+        fs.writeFileSync(PID_FILE, String(child.pid));
+        child.unref();
+        console.log('daemon started');
+      }
+    });
+
+    child.stderr.on('data', data => {
+      stderr += data.toString();
+    });
+
+    child.on('exit', code => {
+      if (stdout.includes('br daemon running')) return;
+      clearTimeout(timeout);
+      console.error('daemon exited with code', code);
+      if (stderr.trim()) console.error(stderr.trim());
+    });
   });
 
 program
