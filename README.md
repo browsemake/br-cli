@@ -1,6 +1,6 @@
-# br_cli
+# br-cli
 
-A simple CLI tool to control a background browser using Playwright.
+A command line tool to control background browser in daemon mode. Can be seamless integrated with claude code or gemini cli
 
 ## Usage
 
