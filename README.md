@@ -1,20 +1,16 @@
 # br-cli
-
 A command line tool to control background browser in daemon mode. Can be seamless integrated with claude code or gemini cli
 
 ## Usage
-
 Install dependencies (requires Node.js 18+). After installing the CLI you must
 download the Playwright browser binaries. This is a one‑time step and works on
 Windows, Linux and macOS:
 
 ```bash
 npm install -g @halfjuice/br-cli
-npx playwright install
 ```
 
 ### Start the daemon
-
 ```bash
 br start
 ```
@@ -22,7 +18,6 @@ If starting the daemon fails (for example due to missing Playwright browsers),
 the CLI prints the error output so you can diagnose the issue.
 
 ### Navigate to a URL
-
 ```bash
 br goto https://example.com
 ```
