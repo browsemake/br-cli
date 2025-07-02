@@ -4,6 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+let lastIdToXPath = {}; // Global variable to store the last idToXPath mapping
 const secrets = new Set();
 const history = [];
 
@@ -68,20 +69,32 @@ function record(action, args = {}) {
     }
   });
 
-  app.post('/scroll-into-view', async (req, res) => {
-    const { selector } = req.body;
-    if (!selector) return res.status(400).send('missing selector');
-    try {
-      await getActivePage().evaluate(sel => {
-        const el = document.querySelector(sel);
-        if (el) el.scrollIntoView();
-      }, selector);
-      record('scrollIntoView', { selector });
-      res.send('ok');
-    } catch (err) {
-      res.status(500).send(err.message);
+  async function resolveAndPerformAction(req, res, actionFn, recordAction, recordArgs = {}) {
+  let { selector } = req.body;
+  if (!selector) return res.status(400).send('missing selector');
+
+  try {
+    if (!isNaN(selector) && !isNaN(parseFloat(selector))) {
+      const xpath = lastIdToXPath[selector];
+      if (!xpath) return res.status(404).send('XPath not found for ID');
+      selector = xpath;
     }
-  });
+    await actionFn(selector);
+    record(recordAction, { selector, ...recordArgs });
+    res.send('ok');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
+
+app.post('/scroll-into-view', async (req, res) => {
+  await resolveAndPerformAction(req, res, async (selector) => {
+    await getActivePage().evaluate(sel => {
+      const el = document.querySelector(sel);
+      if (el) el.scrollIntoView();
+    }, selector);
+  }, 'scrollIntoView');
+});
 
   app.post('/scroll-to', async (req, res) => {
     let { percentage } = req.body;
@@ -99,41 +112,29 @@ function record(action, args = {}) {
   });
 
   app.post('/fill', async (req, res) => {
-    const { selector, text } = req.body;
-    if (!selector || text === undefined) return res.status(400).send('missing selector or text');
-    try {
-      await getActivePage().fill(selector, text);
-      record('fill', { selector, text });
-      res.send('ok');
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  });
+  const { text } = req.body;
+  if (text === undefined) return res.status(400).send('missing text');
+  await resolveAndPerformAction(req, res, async (selector) => {
+    await getActivePage().fill(selector, text);
+  }, 'fill', { text });
+});
 
   app.post('/fill-secret', async (req, res) => {
-    const { selector, secret } = req.body;
-    if (!selector || secret === undefined) return res.status(400).send('missing selector or secret');
-    try {
-      await getActivePage().fill(selector, secret);
-      secrets.add(secret);
-      record('fill-secret', { selector });
-      res.send('ok');
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  });
+  const { secret } = req.body;
+  if (secret === undefined) return res.status(400).send('missing secret');
+  await resolveAndPerformAction(req, res, async (selector) => {
+    await getActivePage().fill(selector, secret);
+    secrets.add(secret);
+  }, 'fill-secret');
+});
 
   app.post('/type', async (req, res) => {
-    const { selector, text } = req.body;
-    if (!selector || text === undefined) return res.status(400).send('missing selector or text');
-    try {
-      await getActivePage().type(selector, text);
-      record('type', { selector, text });
-      res.send('ok');
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  });
+  const { text } = req.body;
+  if (text === undefined) return res.status(400).send('missing text');
+  await resolveAndPerformAction(req, res, async (selector) => {
+    await getActivePage().type(selector, text);
+  }, 'type', { text });
+});
 
   app.post('/press', async (req, res) => {
     const { key } = req.body;
@@ -172,16 +173,10 @@ function record(action, args = {}) {
   });
 
   app.post('/click', async (req, res) => {
-    const { selector } = req.body;
-    if (!selector) return res.status(400).send('missing selector');
-    try {
-      await getActivePage().click(selector);
-      record('click', { selector });
-      res.send('ok');
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  });
+  await resolveAndPerformAction(req, res, async (selector) => {
+    await getActivePage().click(selector);
+  }, 'click');
+});
 
   app.get('/screenshot', async (req, res) => {
     try {
@@ -225,6 +220,7 @@ function record(action, args = {}) {
       const session = await page.context().newCDPSession(page);
       await session.send('DOM.enable');
       await session.send('Accessibility.enable');
+
       const { nodes: axNodes } = await session.send('Accessibility.getFullAXTree');
       const { nodes: domNodes } = await session.send('DOM.getFlattenedDocument', { depth: -1, pierce: true });
       await session.detach();
@@ -233,7 +229,7 @@ function record(action, args = {}) {
       for (const node of domNodes) {
         domMap.set(node.nodeId, { ...node, children: [] });
       }
-      for (const node of domNodes) {
+      for (const node of domMap.values()) {
         if (node.parentId) {
           const parent = domMap.get(node.parentId);
           if (parent) parent.children.push(domMap.get(node.nodeId));
@@ -265,7 +261,7 @@ function record(action, args = {}) {
       }
       const rootAx = axNodes.find(n => !childSet.has(n.nodeId)) || axNodes[0];
 
-      const idToXPath = {};
+      let idToXPath = {};
       function buildTree(nodeId, indent = 0) {
         const axNode = axMap.get(nodeId);
         if (!axNode) return '';
@@ -274,7 +270,8 @@ function record(action, args = {}) {
         const role = axNode.role?.value || '';
         const name = axNode.name?.value || '';
         const tag = domNode ? `<${domNode.nodeName.toLowerCase()}>` : '';
-        let str = `${'  '.repeat(indent)}[${axNode.nodeId}] ${role}${tag ? ' ' + tag : ''}${name ? ': ' + name : ''}\n`;
+        let str = `${'  '.repeat(indent)}[${axNode.nodeId}] ${role}${tag ? ' ' + tag : ''}${name ? ': ' + name : ''}
+`;
         for (const childId of axNode.childIds || []) {
           str += buildTree(childId, indent + 1);
         }
@@ -282,11 +279,20 @@ function record(action, args = {}) {
       }
 
       const tree = buildTree(rootAx.nodeId, 0);
-      res.json({ tree, idToXPath });
+      lastIdToXPath = idToXPath; // Store the mapping globally
+      res.json({ tree });
     } catch (err) {
       res.status(500).send(err.message + " " + err.stack);
     }
   });
+
+  app.post('/xpath-for-id', (req, res) => {
+    const { id } = req.body;
+    if (id === undefined) return res.status(400).send('missing id');
+    const xpath = lastIdToXPath[id];
+    if (!xpath) return res.status(404).send('XPath not found for ID');
+    res.json({ xpath });
+  }); " " + err.stack);    }  });  app.post('/xpath-for-id', (req, res) => {    const { id } = req.body;    if (id === undefined) return res.status(400).send('missing id');    const xpath = lastIdToXPath[id];    if (!xpath) return res.status(404).send('XPath not found for ID');    res.json({ xpath });  });
 
   const port = 3030;
   app.listen(port, () => {
