@@ -226,10 +226,28 @@ program
 
 program
   .command('view-html')
-  .description('Output the full HTML source of the current page.')
-  .action(async () => {
-    const html = await send('/html');
-    console.log(html);
+  .description('Output the full HTML source of the current page (paginated, 5000 chars per page).')
+  .option('-p, --page <number>', 'Page number to view', '1')
+  .action(async (opts) => {
+    const page = Number(opts.page) || 1;
+    const html = await send(`/html?page=${page}`);
+    if (html.length === 0) {
+      console.log('No HTML content found for this page.');
+      return;
+    }
+    const PAGE_SIZE = 5000;
+    const totalPages = Math.ceil(html.length / PAGE_SIZE);
+    const start = (page - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const chunk = html.slice(start, end);
+    console.log(chunk);
+    console.log(`\n--- Page ${page} of ${totalPages} ---`);
+    if (totalPages > 1) {
+      console.log('Use --page <n> to view a different page.');
+    }
+    if (html.length > PAGE_SIZE) {
+      console.log('Hint: If the HTML is too large to view comfortably, try the "view-tree" command for a structured overview.');
+    }
   });
 
 program
