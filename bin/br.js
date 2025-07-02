@@ -40,10 +40,10 @@ function send(path, method = 'GET', body) {
 
 program
   .command('start')
-  .description('start browser daemon')
+  .description('Start the headless browser daemon process.')
   .action(() => {
     if (getRunningPid()) {
-      console.log('daemon already running');
+      console.log('Daemon is already running.');
       return;
     }
 
@@ -56,8 +56,8 @@ program
     let stderr = '';
 
     const timeout = setTimeout(() => {
-      console.error('daemon failed to start');
-      if (stderr.trim()) console.error(stderr.trim());
+      console.error('Daemon failed to start in a timely manner.');
+      if (stderr.trim()) console.error('Error output:\n', stderr.trim());
       process.exit(1);
     }, 5000);
 
@@ -67,7 +67,7 @@ program
         clearTimeout(timeout);
         fs.writeFileSync(PID_FILE, String(child.pid));
         child.unref();
-        console.log('daemon started');
+        console.log('Daemon started successfully.');
         process.exit(0);
       }
     });
@@ -79,126 +79,137 @@ program
     child.on('exit', code => {
       if (stdout.includes('br daemon running')) return;
       clearTimeout(timeout);
-      console.error('daemon exited with code', code);
-      if (stderr.trim()) console.error(stderr.trim());
+      console.error(`Daemon exited unexpectedly with code ${code}.`);
+      if (stderr.trim()) console.error('Error output:\n', stderr.trim());
       process.exit(1);
     });
   });
 
 program
   .command('stop')
-  .description('stop browser daemon')
+  .description('Stop the headless browser daemon process.')
   .action(() => {
     const pid = getRunningPid();
     if (!pid) {
-      console.log('daemon not running');
+      console.log('Daemon is not running.');
       return;
     }
     try {
       process.kill(pid);
       fs.unlinkSync(PID_FILE);
-      console.log('daemon stopped');
+      console.log('Daemon stopped.');
     } catch (err) {
-      console.error('failed to stop daemon:', err.message);
+      console.error('Failed to stop daemon:', err.message);
     }
   });
 
 program
-  .command('goto <url>')
-  .description('navigate to url')
+  .command('goto')
+  .description('Navigate the browser to a specific URL.')
+  .argument('<url>', 'The full URL to navigate to (e.g., "https://example.com").')
   .action(async (url) => {
     await send('/goto', 'POST', { url });
-    console.log('navigated to', url);
+    console.log('Navigated to', url);
   });
 
 program
-  .command('scrollIntoView <selector>')
-  .description('scroll element into view')
+  .command('scrollIntoView')
+  .description('Scroll the page until a specific element is in view.')
+  .argument('<selector>', 'The CSS selector for the target element.')
   .action(async (selector) => {
     await send('/scroll-into-view', 'POST', { selector });
-    console.log('scrolled into view', selector);
+    console.log('Scrolled', selector, 'into view.');
   });
 
 program
-  .command('scrollTo <percentage>')
-  .description('scroll to percentage of page height')
+  .command('scrollTo')
+  .description('Scroll the page to a given percentage of its total height.')
+  .argument('<percentage>', 'A number from 0 to 100.')
   .action(async (percentage) => {
     await send('/scroll-to', 'POST', { percentage });
-    console.log('scrolled to', percentage + '%');
+    console.log(`Scrolled to ${percentage}%.`);
   });
 
 program
-  .command('fill <selector> <text>')
-  .description('fill input with text')
+  .command('fill')
+  .description('Fill a form field with the provided text.')
+  .argument('<selector>', 'The CSS selector for the input field.')
+  .argument('<text>', 'The text to fill the field with.')
   .action(async (selector, text) => {
     await send('/fill', 'POST', { selector, text });
-    console.log('filled', selector);
+    console.log('Filled', selector);
   });
 
 program
-  .command('fill-secret <selector> <envVar>')
-  .description('fill input with secret from env var')
+  .command('fill-secret')
+  .description('Fill a form field with a value from a specified environment variable. The value is masked in logs.')
+  .argument('<selector>', 'The CSS selector for the input field.')
+  .argument('<envVar>', 'The name of the environment variable containing the secret.')
   .action(async (selector, envVar) => {
     const secret = process.env[envVar];
     if (!secret) {
-      console.error(`environment variable ${envVar} is not set`);
+      console.error(`Error: Environment variable "${envVar}" is not set.`);
       return;
     }
     await send('/fill-secret', 'POST', { selector, secret });
-    console.log('filled secret', selector);
+    console.log('Filled secret value into', selector);
   });
 
 program
-  .command('type <selector> <text>')
-  .description('type text into input (alias for fill)')
+  .command('type')
+  .description('Simulate typing text into a form field, character by character.')
+  .argument('<selector>', 'The CSS selector for the input field.')
+  .argument('<text>', 'The text to type into the field.')
   .action(async (selector, text) => {
     await send('/type', 'POST', { selector, text });
-    console.log('typed in', selector);
+    console.log('Typed text into', selector);
   });
 
 program
-  .command('press <key>')
-  .description('press keyboard key')
+  .command('press')
+  .description("Simulate a single key press (e.g., 'Enter', 'Tab').")
+  .argument('<key>', "The key to press, as defined in Playwright's documentation.")
   .action(async (key) => {
     await send('/press', 'POST', { key });
-    console.log('pressed', key);
+    console.log('Pressed', key);
   });
 
 program
   .command('nextChunk')
-  .description('scroll down one viewport height')
+  .description('Scroll down by one viewport height to view the next chunk of content.')
   .action(async () => {
     await send('/next-chunk', 'POST');
-    console.log('scrolled next chunk');
+    console.log('Scrolled to the next chunk.');
   });
 
 program
   .command('prevChunk')
-  .description('scroll up one viewport height')
+  .description('Scroll up by one viewport height to view the previous chunk of content.')
   .action(async () => {
     await send('/prev-chunk', 'POST');
-    console.log('scrolled previous chunk');
+    console.log('Scrolled to the previous chunk.');
   });
 
 program
-  .command('click <selector>')
-  .description('click element by selector')
+  .command('click')
+  .description('Click an element matching the specified CSS selector.')
+  .argument('<selector>', 'The CSS selector for the element to click.')
   .action(async (selector) => {
     await send('/click', 'POST', { selector });
-    console.log('clicked', selector);
+    console.log('Clicked', selector);
   });
 
 program
   .command('screenshot')
-  .description('capture screenshot to temp folder')
+  .description('Capture a screenshot of the current page and save it to a temporary file.')
   .action(async () => {
     const file = await send('/screenshot');
-    console.log('screenshot saved to', file);
+    console.log('Screenshot saved to:', file);
   });
 
 program
   .command('view-html')
-  .description('output current page html')
+  .description('Output the full HTML source of the current page.')
   .action(async () => {
     const html = await send('/html');
     console.log(html);
@@ -206,7 +217,8 @@ program
 
 program
   .command('history')
-  .description('print recorded action history')
+  .alias('hist')
+  .description('Display the history of actions performed in the current session.')
   .action(async () => {
     const hist = await send('/history');
     console.log(hist);
@@ -214,15 +226,15 @@ program
 
 program
   .command('clear-history')
-  .description('clear recorded action history')
+  .description("Clear the session's action history.")
   .action(async () => {
     await send('/history/clear', 'POST');
-    console.log('history cleared');
+    console.log('History cleared.');
   });
   
 program
   .command('view-tree')
-  .description('output combined accessibility and DOM tree')
+  .description("Display a hierarchical tree of the page's accessibility and DOM nodes.")
   .action(async () => {
     const { tree } = await send('/tree');
     console.log(tree);
