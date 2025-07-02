@@ -292,7 +292,7 @@ app.post('/scroll-into-view', async (req, res) => {
     const xpath = lastIdToXPath[id];
     if (!xpath) return res.status(404).send('XPath not found for ID');
     res.json({ xpath });
-  }); " " + err.stack);    }  });  app.post('/xpath-for-id', (req, res) => {    const { id } = req.body;    if (id === undefined) return res.status(400).send('missing id');    const xpath = lastIdToXPath[id];    if (!xpath) return res.status(404).send('XPath not found for ID');    res.json({ xpath });  });
+  });
 
   const port = 3030;
   app.listen(port, () => {
