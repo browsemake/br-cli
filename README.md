@@ -125,6 +125,18 @@ br view-tree
 Outputs a hierarchical tree combining accessibility roles with DOM element
 information. It also builds an ID-to-XPath map for quick element lookup.
 
+### List open tabs
+
+```bash
+br tabs
+```
+
+### Switch to a tab by index
+
+```bash
+br switch-tab 1
+```
+
 ### Stop the daemon
 
 ```bash
