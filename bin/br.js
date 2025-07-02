@@ -240,4 +240,23 @@ program
     console.log(tree);
   });
 
+program
+  .command('tabs')
+  .description('List all open tabs (pages) in the browser daemon.')
+  .action(async () => {
+    const tabs = JSON.parse(await send('/tabs'));
+    tabs.forEach(tab => {
+      console.log(`${tab.isActive ? '*' : ' '}${tab.index}: ${tab.title} (${tab.url})`);
+    });
+  });
+
+program
+  .command('switch-tab')
+  .description('Switch to a different open tab by its index.')
+  .argument('<index>', 'The index of the tab to switch to.')
+  .action(async (index) => {
+    await send('/tabs/switch', 'POST', { index: Number(index) });
+    console.log('Switched to tab', index);
+  });
+
 program.parse();

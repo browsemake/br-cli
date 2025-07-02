@@ -13,15 +13,50 @@ function record(action, args = {}) {
 
 (async () => {
   const browser = await chromium.launch({ headless: false });
-  const page = await browser.newPage();
+  const context = await browser.newContext();
+  let pages = await context.pages();
+  let activePageIndex = 0;
+
+  function getActivePage() {
+    return pages[activePageIndex];
+  }
+
+  context.on('page', newPage => {
+    pages.push(newPage);
+  });
+
   const app = express();
   app.use(express.json());
+
+  app.get('/tabs', async (req, res) => {
+    try {
+      const tabInfo = await Promise.all(pages.map(async (p, i) => ({
+        index: i,
+        title: await p.title(),
+        url: p.url(),
+        isActive: i === activePageIndex
+      })));
+      res.json(tabInfo);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+
+  app.post('/tabs/switch', (req, res) => {
+    const { index } = req.body;
+    if (index === undefined || index < 0 || index >= pages.length) {
+      return res.status(400).send('invalid tab index');
+    }
+    activePageIndex = index;
+    record('switch-tab', { index });
+    res.send('ok');
+  });
 
   app.post('/goto', async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).send('missing url');
     try {
-      await page.goto(url);
+      await getActivePage().goto(url);
       record('goto', { url });
       res.send('ok');
     } catch (err) {
@@ -33,7 +68,7 @@ function record(action, args = {}) {
     const { selector } = req.body;
     if (!selector) return res.status(400).send('missing selector');
     try {
-      await page.evaluate(sel => {
+      await getActivePage().evaluate(sel => {
         const el = document.querySelector(sel);
         if (el) el.scrollIntoView();
       }, selector);
@@ -49,7 +84,7 @@ function record(action, args = {}) {
     if (percentage === undefined) return res.status(400).send('missing percentage');
     percentage = Math.max(0, Math.min(100, Number(percentage)));
     try {
-      await page.evaluate(pct => {
+      await getActivePage().evaluate(pct => {
         window.scrollTo(0, document.body.scrollHeight * (pct / 100));
       }, percentage);
       record('scrollTo', { percentage });
@@ -63,7 +98,7 @@ function record(action, args = {}) {
     const { selector, text } = req.body;
     if (!selector || text === undefined) return res.status(400).send('missing selector or text');
     try {
-      await page.fill(selector, text);
+      await getActivePage().fill(selector, text);
       record('fill', { selector, text });
       res.send('ok');
     } catch (err) {
@@ -75,7 +110,7 @@ function record(action, args = {}) {
     const { selector, secret } = req.body;
     if (!selector || secret === undefined) return res.status(400).send('missing selector or secret');
     try {
-      await page.fill(selector, secret);
+      await getActivePage().fill(selector, secret);
       secrets.add(secret);
       record('fill-secret', { selector });
       res.send('ok');
@@ -88,7 +123,7 @@ function record(action, args = {}) {
     const { selector, text } = req.body;
     if (!selector || text === undefined) return res.status(400).send('missing selector or text');
     try {
-      await page.type(selector, text);
+      await getActivePage().type(selector, text);
       record('type', { selector, text });
       res.send('ok');
     } catch (err) {
@@ -100,7 +135,7 @@ function record(action, args = {}) {
     const { key } = req.body;
     if (!key) return res.status(400).send('missing key');
     try {
-      await page.keyboard.press(key);
+      await getActivePage().keyboard.press(key);
       record('press', { key });
       res.send('ok');
     } catch (err) {
@@ -110,7 +145,7 @@ function record(action, args = {}) {
 
   app.post('/next-chunk', async (req, res) => {
     try {
-      await page.evaluate(() => {
+      await getActivePage().evaluate(() => {
         window.scrollBy(0, window.innerHeight);
       });
       record('next-chunk');
@@ -122,7 +157,7 @@ function record(action, args = {}) {
 
   app.post('/prev-chunk', async (req, res) => {
     try {
-      await page.evaluate(() => {
+      await getActivePage().evaluate(() => {
         window.scrollBy(0, -window.innerHeight);
       });
       record('prev-chunk');
@@ -136,7 +171,7 @@ function record(action, args = {}) {
     const { selector } = req.body;
     if (!selector) return res.status(400).send('missing selector');
     try {
-      await page.click(selector);
+      await getActivePage().click(selector);
       record('click', { selector });
       res.send('ok');
     } catch (err) {
@@ -151,7 +186,7 @@ function record(action, args = {}) {
         fs.mkdirSync(dir, { recursive: true });
       }
       const file = path.join(dir, `shot-${Date.now()}.png`);
-      await page.screenshot({ path: file });
+      await getActivePage().screenshot({ path: file });
       res.send(file);
     } catch (err) {
       res.status(500).send(err.message);
@@ -160,7 +195,7 @@ function record(action, args = {}) {
 
   app.get('/html', async (req, res) => {
     try {
-      let html = await page.content();
+      let html = await getActivePage().content();
       for (const secret of secrets) {
         if (!secret) continue;
         html = html.split(secret).join('***');
@@ -182,6 +217,7 @@ function record(action, args = {}) {
 
   app.get('/tree', async (req, res) => {
     try {
+      const page = getActivePage();
       const session = await page.context().newCDPSession(page);
       const { nodes: axNodes } = await session.send('Accessibility.getFullAXTree');
       const { nodes: domNodes } = await session.send('DOM.getFlattenedDocument', { depth: -1, pierce: true });
