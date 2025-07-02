@@ -1,5 +1,5 @@
-# br-cli
-A LLM friendly command line tool to control background browser in daemon mode. Can be seamless integrated with [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
+# Br CLI
+`br` is a LLM friendly command line tool to control background browser in daemon mode. Can be seamless integrated with [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 
 Feature includes but not limited to:
 - Command line for browser automation powered by playwright
