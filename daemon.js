@@ -287,12 +287,14 @@ If you want to use ID instead of XPath, use 60 instead of #60 or [60]`);
         const axNode = axMap.get(nodeId);
         if (!axNode) return '';
         const domNode = backendIdToDomNodeMap.get(axNode.backendDOMNodeId); // Use backendIdToDomNodeMap
-        // idToXPath is already populated by buildXPathAndMap
         const role = axNode.role?.value || '';
         const name = axNode.name?.value || '';
         const tag = domNode ? `<${domNode.nodeName.toLowerCase()}>` : '';
         let str = `${'  '.repeat(indent)}[${axNode.nodeId}] ${role}${tag ? ' ' + tag : ''}${name ? ': ' + name : ''}
 `;
+        if (domNode && domNode.nodeId) {
+          idToXPath[axNode.nodeId] = idToXPath[domNode.nodeId];
+        }
         for (const childId of axNode.childIds || []) {
           str += buildTree(childId, indent + 1);
         }
