@@ -9,6 +9,14 @@ Feature includes but not limited to:
 - Secret management so that your key and password are hidden from LLM
 - Action history tracking for easier replay and script reconstruction
 
+## Demo
+Example of using Gemini CLI and br-cli together to navigate to GitHub:
+<div align="center">
+    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfa">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
+    </a>
+</div>
+
 ## Usage
 Install dependencies (requires Node.js 18+). After installing the CLI you must
 download the Playwright browser binaries. This is a one‑time step and works on
