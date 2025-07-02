@@ -12,7 +12,7 @@ Feature includes but not limited to:
 ## Demo
 Example of using Gemini CLI and br-cli together to navigate to GitHub:
 <div align="center">
-    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfa">
+    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
     </a>
 </div>
