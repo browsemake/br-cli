@@ -68,6 +68,7 @@ program
         fs.writeFileSync(PID_FILE, String(child.pid));
         child.unref();
         console.log('daemon started');
+        process.exit(0);
       }
     });
 
@@ -80,6 +81,7 @@ program
       clearTimeout(timeout);
       console.error('daemon exited with code', code);
       if (stderr.trim()) console.error(stderr.trim());
+      process.exit(1);
     });
   });
 

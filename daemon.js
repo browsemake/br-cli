@@ -245,6 +245,7 @@ function record(action, args = {}) {
   const port = 3030;
   app.listen(port, () => {
     console.log(`br daemon running on port ${port}`);
+    process.stdout.uncork();
   });
 
   async function shutdown() {
