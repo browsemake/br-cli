@@ -1,6 +1,6 @@
 {
   "name": "@halfjuice/br-cli",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "type": "commonjs",
   "bin": {
     "br": "./bin/br.js"
