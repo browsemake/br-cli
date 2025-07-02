@@ -79,7 +79,7 @@ function record(action, args = {}) {
         if (!xpath) return res.status(400).send('XPath not found for ID');
         selector = xpath;
       }
-      const element = await getActivePage().$(selector);
+      const element = await getActivePage().$('xpath=' + selector);
       if (!element) {
         return res.status(400).send(`Element not found for selector: ${selector}`);
       }
@@ -87,7 +87,9 @@ function record(action, args = {}) {
       record(recordAction, { selector, ...recordArgs });
       res.send('ok');
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).send(`Error when action: ${err.message}
+
+If you want to use ID instead of XPath, use 60 instead of #60 or [60]`);
     }
   }
 
@@ -226,36 +228,52 @@ function record(action, args = {}) {
       await session.send('Accessibility.enable');
 
       const { nodes: axNodes } = await session.send('Accessibility.getFullAXTree');
-      const { nodes: domNodes } = await session.send('DOM.getFlattenedDocument', { depth: -1, pierce: true });
+      const { root: domRoot } = await session.send('DOM.getDocument', { depth: -1, pierce: true });
       await session.detach();
 
-      const domMap = new Map();
-      for (const node of domNodes) {
-        domMap.set(node.nodeId, { ...node, children: [] });
-      }
-      for (const node of domMap.values()) {
-        if (node.parentId) {
-          const parent = domMap.get(node.parentId);
-          if (parent) parent.children.push(domMap.get(node.nodeId));
-        }
-      }
-      const backendIdToNode = new Map();
-      for (const node of domMap.values()) backendIdToNode.set(node.backendNodeId, node);
+      const nodeIdToDomNodeMap = new Map();
+      const backendIdToDomNodeMap = new Map();
+      let idToXPath = {};
 
-      function computeXPath(node) {
-        if (!node.parentId) return `/${node.nodeName.toLowerCase()}`;
-        const parent = domMap.get(node.parentId);
-        if (!parent) {
-          // If parent is not found, return a simplified XPath for the current node
-          return `//${node.nodeName.toLowerCase()}`;
+      function generateXPath(node, parentNode) {
+        if (!node || node.nodeName === '#document') {
+          return '';
         }
-        const siblings = parent.children.filter(c => c.nodeName === node.nodeName);
-        const index = siblings.indexOf(node) + 1;
-        return computeXPath(parent) + `/${node.nodeName.toLowerCase()}[${index}]`;
+
+        const tagName = node.nodeName.toLowerCase();
+        let segment = tagName;
+
+        if (parentNode && parentNode.children) {
+          const siblings = parentNode.children.filter(child => child.nodeName === node.nodeName);
+          if (siblings.length > 1) {
+            const index = siblings.indexOf(node) + 1;
+            segment += `[${index}]`;
+          }
+        }
+        return segment;
       }
-      for (const node of domMap.values()) {
-        node.xpath = computeXPath(node);
+
+      function traverseDomAndMap(node, parentXPath = '', parentNode = null) {
+        if (!node) return;
+
+        nodeIdToDomNodeMap.set(node.nodeId, node);
+        backendIdToDomNodeMap.set(node.backendNodeId, node);
+
+        const currentSegment = generateXPath(node, parentNode);
+        const currentXPath = parentXPath ? `${parentXPath}/${currentSegment}` : `/${currentSegment}`;
+
+        if (node.nodeId) {
+          idToXPath[node.nodeId] = currentXPath;
+        }
+
+        if (node.children) {
+          for (const child of node.children) {
+            traverseDomAndMap(child, currentXPath, node);
+          }
+        }
       }
+
+      traverseDomAndMap(domRoot);
 
       const axMap = new Map();
       const childSet = new Set();
@@ -265,12 +283,11 @@ function record(action, args = {}) {
       }
       const rootAx = axNodes.find(n => !childSet.has(n.nodeId)) || axNodes[0];
 
-      let idToXPath = {};
       function buildTree(nodeId, indent = 0) {
         const axNode = axMap.get(nodeId);
         if (!axNode) return '';
-        const domNode = backendIdToNode.get(axNode.backendDOMNodeId);
-        if (domNode) idToXPath[axNode.nodeId] = domNode.xpath;
+        const domNode = backendIdToDomNodeMap.get(axNode.backendDOMNodeId); // Use backendIdToDomNodeMap
+        // idToXPath is already populated by buildXPathAndMap
         const role = axNode.role?.value || '';
         const name = axNode.name?.value || '';
         const tag = domNode ? `<${domNode.nodeName.toLowerCase()}>` : '';

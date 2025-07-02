@@ -38,7 +38,14 @@ function send(path, method = 'GET', body) {
         }
       });
     });
-    req.on('error', (e) => console.error(e.message));
+    req.on('error', (e) => {
+      if (e.code === 'ECONNREFUSED') {
+        reject('Daemon is not running. Please start it with "br start".');
+      } else {
+        console.log('Unknown error, try start the daemon with "br start":');
+        console.error(e);
+      }
+    });
     if (data) req.write(data);
     req.end();
   });
@@ -368,4 +375,11 @@ program
     }
   });
 
-program.parse();
+try {
+  program.parse();
+} catch (err) {
+  if (err.code === 'commander.unknownOption') {
+    console.log();
+    program.outputHelp();
+  }
+}
