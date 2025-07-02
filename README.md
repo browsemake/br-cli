@@ -9,14 +9,6 @@ Feature includes but not limited to:
 - Secret management to isolate password from LLM
 - History tracking for replay and scripting
 
-## Demo
-Example of using Gemini CLI and br-cli together to navigate to GitHub:
-<div align="center">
-    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
-    </a>
-</div>
-
 ## Usage
 Install the CLI:
 
@@ -26,7 +18,19 @@ npm install -g @browsemake/br-cli
 
 Then open your favorite LLM tools (Claude Code, Gemini CLI) and prompt to use `br`:
 
-`You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli`
+```bash
+You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
+```
+
+## Demo
+Example of using Gemini CLI and br-cli together to navigate to GitHub:
+<div align="center">
+    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
+    </a>
+</div>
+
+## Command
 
 ### Start the daemon
 ```bash
