@@ -1,5 +1,5 @@
 {
-  "name": "@halfjuice/br-cli",
+  "name": "@browsemake/br-cli",
   "version": "0.1.17",
   "type": "commonjs",
   "bin": {
