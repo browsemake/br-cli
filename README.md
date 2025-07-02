@@ -15,7 +15,7 @@ download the Playwright browser binaries. This is a one‑time step and works on
 Windows, Linux and macOS:
 
 ```bash
-npm install -g @halfjuice/br-cli
+npm install -g @browsemake/br-cli
 ```
 
 ### Start the daemon
