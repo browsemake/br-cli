@@ -14,7 +14,7 @@ function record(action, args = {}) {
 (async () => {
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
-  let pages = await context.pages();
+  let pages = [await context.newPage()];
   let activePageIndex = 0;
 
   function getActivePage() {
