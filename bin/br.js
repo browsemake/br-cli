@@ -49,7 +49,7 @@ program
 
     const child = spawn(process.execPath, [path.join(__dirname, '../daemon.js')], {
       detached: true,
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe']
     });
 
     let stdout = '';

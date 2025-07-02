@@ -12,7 +12,7 @@ function record(action, args = {}) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: false });
   const page = await browser.newPage();
   const app = express();
   app.use(express.json());
