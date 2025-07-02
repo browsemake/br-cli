@@ -1,0 +1,17 @@
+name: Daily Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: daily-${{ github.run_id }}
+          name: Daily Release ${{ github.run_id }}
+          body: Automated daily release.
