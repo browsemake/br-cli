@@ -28,6 +28,8 @@ br goto https://example.com
 br click "button.submit"
 ```
 
+Commands that accept a CSS selector (like `click`, `fill`, `scrollIntoView`, `type`) can also accept a numeric ID. These IDs are displayed in the output of `br view-tree` and allow for direct interaction with elements identified in the tree.
+
 ### Scroll element into view
 
 ```bash

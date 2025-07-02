@@ -132,7 +132,7 @@ program
 program
   .command('scrollIntoView')
   .description('Scroll the page until a specific element is in view.')
-  .argument('<selector>', 'The CSS selector for the target element.')
+  .argument('<selectorOrId>', 'The CSS selector or node ID for the target element.')
   .action(async (selector) => {
     await send('/scroll-into-view', 'POST', { selector });
     console.log('Scrolled', selector, 'into view.');
@@ -150,7 +150,7 @@ program
 program
   .command('fill')
   .description('Fill a form field with the provided text.')
-  .argument('<selector>', 'The CSS selector for the input field.')
+  .argument('<selectorOrId>', 'The CSS selector or node ID for the input field.')
   .argument('<text>', 'The text to fill the field with.')
   .action(async (selector, text) => {
     await send('/fill', 'POST', { selector, text });
@@ -160,7 +160,7 @@ program
 program
   .command('fill-secret')
   .description('Fill a form field with a value from a specified environment variable. The value is masked in logs.')
-  .argument('<selector>', 'The CSS selector for the input field.')
+  .argument('<selectorOrId>', 'The CSS selector or node ID for the input field.')
   .argument('<envVar>', 'The name of the environment variable containing the secret.')
   .action(async (selector, envVar) => {
     const secret = process.env[envVar];
@@ -175,7 +175,7 @@ program
 program
   .command('type')
   .description('Simulate typing text into a form field, character by character.')
-  .argument('<selector>', 'The CSS selector for the input field.')
+  .argument('<selectorOrId>', 'The CSS selector or node ID for the input field.')
   .argument('<text>', 'The text to type into the field.')
   .action(async (selector, text) => {
     await send('/type', 'POST', { selector, text });
@@ -210,7 +210,7 @@ program
 program
   .command('click')
   .description('Click an element matching the specified CSS selector.')
-  .argument('<selector>', 'The CSS selector for the element to click.')
+  .argument('<selectorOrId>', 'The CSS selector or node ID for the element to click.')
   .action(async (selector) => {
     await send('/click', 'POST', { selector });
     console.log('Clicked', selector);
