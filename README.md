@@ -1,13 +1,13 @@
 # Br CLI
-`br` is a LLM friendly command line tool to control background browser in daemon mode. Can be seamless integrated with [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
+`br` is a LLM friendly command line tool to control background browser in daemon mode. It can be called by [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) easily for agentic tasks
 
 Feature includes but not limited to:
-- Command line for browser automation powered by playwright
-- LLM friendly error message for LLM to correct its command line
-- Always-on daemon mode so it lives across multiple LLM sessions for continuity
-- Accessibility tree view for easier LLM interpretation
-- Secret management so that your key and password are hidden from LLM
-- Action history tracking for easier replay and script reconstruction
+- Comprehensive action for browser automation (navigation, click, etc.)
+- LLM friendly command output with error correction hint
+- Always-on daemon mode so it lives across multiple LLM sessions
+- Accessibility tree view for easier LLM interpretation than HTML
+- Secret management to isolate password from LLM
+- History tracking for replay and scripting
 
 ## Demo
 Example of using Gemini CLI and br-cli together to navigate to GitHub:
@@ -18,13 +18,15 @@ Example of using Gemini CLI and br-cli together to navigate to GitHub:
 </div>
 
 ## Usage
-Install dependencies (requires Node.js 18+). After installing the CLI you must
-download the Playwright browser binaries. This is a one‑time step and works on
-Windows, Linux and macOS:
+Install the CLI:
 
 ```bash
 npm install -g @browsemake/br-cli
 ```
+
+Then open your favorite LLM tools (Claude Code, Gemini CLI) and prompt to use `br`:
+
+`You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli`
 
 ### Start the daemon
 ```bash
