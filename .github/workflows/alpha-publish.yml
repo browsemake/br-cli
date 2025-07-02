@@ -15,7 +15,7 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm config set _authToken=${{ secrets.NPM_PUBLISH_TOKEN }}
+      - run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}
       - run: npm publish --tag alpha
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
