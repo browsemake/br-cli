@@ -15,6 +15,30 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
+      - name: Bump patch version
+        id: bump
+        run: |
+          version=$(jq -r '.version' package.json)
+          if [[ ! $version =~ ^0\.1\.[0-9]+$ ]]; then
+            echo "Current version $version is not in 0.1.x format" >&2
+            exit 1
+          fi
+          patch=$(echo "$version" | awk -F. '{print $3}')
+          new_patch=$((patch + 1))
+          new_version="0.1.$new_patch"
+          jq --arg v "$new_version" '.version=$v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+          echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version to ${{ steps.bump.outputs.new_version }}"
+          branch: "bump-version-${{ steps.bump.outputs.new_version }}"
+          title: "chore: bump version to ${{ steps.bump.outputs.new_version }}"
+          body: "Automated version bump to ${{ steps.bump.outputs.new_version }}."
+
       - run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}
       - run: npm publish --tag alpha
         env:
