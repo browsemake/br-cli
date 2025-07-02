@@ -28,6 +28,10 @@ function record(action, args = {}) {
   const app = express();
   app.use(express.json());
 
+  app.get('/health', (req, res) => {
+    res.send('ok');
+  });
+
   app.get('/tabs', async (req, res) => {
     try {
       const tabInfo = await Promise.all(pages.map(async (p, i) => ({

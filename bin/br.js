@@ -41,10 +41,27 @@ function send(path, method = 'GET', body) {
 program
   .command('start')
   .description('Start the headless browser daemon process.')
-  .action(() => {
-    if (getRunningPid()) {
-      console.log('Daemon is already running.');
-      return;
+  .action(async () => {
+    const pid = getRunningPid();
+    if (pid) {
+      try {
+        const health = await send('/health');
+        if (health === 'ok') {
+          console.log('Daemon is already running.');
+          return;
+        }
+      } catch (err) {
+        // Health check failed, assume daemon is stale
+        console.log('Found stale daemon process, attempting to stop it...');
+        try {
+          process.kill(pid);
+          fs.unlinkSync(PID_FILE);
+          console.log('Stale daemon stopped.');
+        } catch (killErr) {
+          console.error('Failed to stop stale daemon, please check for zombie processes.');
+          return;
+        }
+      }
     }
 
     const child = spawn(process.execPath, [path.join(__dirname, '../daemon.js')], {
