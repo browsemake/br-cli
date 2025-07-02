@@ -1,5 +1,5 @@
 # br-cli (Browser CLI)
-`br` is a LLM friendly command line tool to control background browser in daemon mode. It can be called by [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) easily for agentic tasks
+`br` is a AI friendly command line tool for browser automation. It can be directly used by [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) for agentic tasks
 
 Feature includes but not limited to:
 - **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
