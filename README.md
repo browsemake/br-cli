@@ -1,6 +1,14 @@
 # br-cli
 A LLM friendly command line tool to control background browser in daemon mode. Can be seamless integrated with [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 
+Feature includes but not limited to:
+- command line for browser automation powered by playwright
+- provide rich prompt feedback for LLM to correct its command line
+- run in daemon mode so it lives across multiple LLM sessions
+- accessibility tree view for easier LLM interpretation
+- secret management so that your key and password are hidden from LLM
+- track action history for easier replay and script reconstruction
+
 ## Usage
 Install dependencies (requires Node.js 18+). After installing the CLI you must
 download the Playwright browser binaries. This is a one‑time step and works on
