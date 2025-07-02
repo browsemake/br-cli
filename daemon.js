@@ -70,31 +70,35 @@ function record(action, args = {}) {
   });
 
   async function resolveAndPerformAction(req, res, actionFn, recordAction, recordArgs = {}) {
-  let { selector } = req.body;
-  if (!selector) return res.status(400).send('missing selector');
+    let { selector } = req.body;
+    if (!selector) return res.status(400).send('missing selector');
 
-  try {
-    if (!isNaN(selector) && !isNaN(parseFloat(selector))) {
-      const xpath = lastIdToXPath[selector];
-      if (!xpath) return res.status(404).send('XPath not found for ID');
-      selector = xpath;
+    try {
+      if (!isNaN(selector) && !isNaN(parseFloat(selector))) {
+        const xpath = lastIdToXPath[selector];
+        if (!xpath) return res.status(400).send('XPath not found for ID');
+        selector = xpath;
+      }
+      const element = await getActivePage().$(selector);
+      if (!element) {
+        return res.status(400).send(`Element not found for selector: ${selector}`);
+      }
+      await actionFn(selector);
+      record(recordAction, { selector, ...recordArgs });
+      res.send('ok');
+    } catch (err) {
+      res.status(500).send(err.message);
     }
-    await actionFn(selector);
-    record(recordAction, { selector, ...recordArgs });
-    res.send('ok');
-  } catch (err) {
-    res.status(500).send(err.message);
   }
-}
 
-app.post('/scroll-into-view', async (req, res) => {
-  await resolveAndPerformAction(req, res, async (selector) => {
-    await getActivePage().evaluate(sel => {
-      const el = document.querySelector(sel);
-      if (el) el.scrollIntoView();
-    }, selector);
-  }, 'scrollIntoView');
-});
+  app.post('/scroll-into-view', async (req, res) => {
+    await resolveAndPerformAction(req, res, async (selector) => {
+      await getActivePage().evaluate(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.scrollIntoView();
+      }, selector);
+    }, 'scrollIntoView');
+  });
 
   app.post('/scroll-to', async (req, res) => {
     let { percentage } = req.body;
@@ -112,29 +116,29 @@ app.post('/scroll-into-view', async (req, res) => {
   });
 
   app.post('/fill', async (req, res) => {
-  const { text } = req.body;
-  if (text === undefined) return res.status(400).send('missing text');
-  await resolveAndPerformAction(req, res, async (selector) => {
-    await getActivePage().fill(selector, text);
-  }, 'fill', { text });
-});
+    const { text } = req.body;
+    if (text === undefined) return res.status(400).send('missing text');
+    await resolveAndPerformAction(req, res, async (selector) => {
+      await getActivePage().fill(selector, text);
+    }, 'fill', { text });
+  });
 
   app.post('/fill-secret', async (req, res) => {
-  const { secret } = req.body;
-  if (secret === undefined) return res.status(400).send('missing secret');
-  await resolveAndPerformAction(req, res, async (selector) => {
-    await getActivePage().fill(selector, secret);
-    secrets.add(secret);
-  }, 'fill-secret');
-});
+    const { secret } = req.body;
+    if (secret === undefined) return res.status(400).send('missing secret');
+    await resolveAndPerformAction(req, res, async (selector) => {
+      await getActivePage().fill(selector, secret);
+      secrets.add(secret);
+    }, 'fill-secret');
+  });
 
   app.post('/type', async (req, res) => {
-  const { text } = req.body;
-  if (text === undefined) return res.status(400).send('missing text');
-  await resolveAndPerformAction(req, res, async (selector) => {
-    await getActivePage().type(selector, text);
-  }, 'type', { text });
-});
+    const { text } = req.body;
+    if (text === undefined) return res.status(400).send('missing text');
+    await resolveAndPerformAction(req, res, async (selector) => {
+      await getActivePage().type(selector, text);
+    }, 'type', { text });
+  });
 
   app.post('/press', async (req, res) => {
     const { key } = req.body;
@@ -173,10 +177,10 @@ app.post('/scroll-into-view', async (req, res) => {
   });
 
   app.post('/click', async (req, res) => {
-  await resolveAndPerformAction(req, res, async (selector) => {
-    await getActivePage().click(selector);
-  }, 'click');
-});
+    await resolveAndPerformAction(req, res, async (selector) => {
+      await getActivePage().click(selector);
+    }, 'click');
+  });
 
   app.get('/screenshot', async (req, res) => {
     try {
@@ -290,7 +294,7 @@ app.post('/scroll-into-view', async (req, res) => {
     const { id } = req.body;
     if (id === undefined) return res.status(400).send('missing id');
     const xpath = lastIdToXPath[id];
-    if (!xpath) return res.status(404).send('XPath not found for ID');
+    if (!xpath) return res.status(400).send('XPath not found for ID');
     res.json({ xpath });
   });
 

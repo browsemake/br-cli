@@ -30,7 +30,13 @@ function send(path, method = 'GET', body) {
     }, (res) => {
       let out = '';
       res.on('data', chunk => out += chunk);
-      res.on('end', () => resolve(out));
+      res.on('end', () => {
+        if (res.statusCode >= 400) {
+          reject(out);
+        } else {
+          resolve(out);
+        }
+      });
     });
     req.on('error', (e) => console.error(e.message));
     if (data) req.write(data);
@@ -125,8 +131,12 @@ program
   .description('Navigate the browser to a specific URL.')
   .argument('<url>', 'The full URL to navigate to (e.g., "https://example.com").')
   .action(async (url) => {
-    await send('/goto', 'POST', { url });
-    console.log('Navigated to', url);
+    try {
+      await send('/goto', 'POST', { url });
+      console.log('Navigated to', url);
+    } catch (error) {
+      console.error('Error navigating:', error);
+    }
   });
 
 program
@@ -134,8 +144,12 @@ program
   .description('Scroll the page until a specific element is in view.')
   .argument('<selectorOrId>', 'The CSS selector or node ID for the target element.')
   .action(async (selector) => {
-    await send('/scroll-into-view', 'POST', { selector });
-    console.log('Scrolled', selector, 'into view.');
+    try {
+      await send('/scroll-into-view', 'POST', { selector });
+      console.log('Scrolled', selector, 'into view.');
+    } catch (error) {
+      console.error('Error scrolling into view:', error);
+    }
   });
 
 program
@@ -143,8 +157,12 @@ program
   .description('Scroll the page to a given percentage of its total height.')
   .argument('<percentage>', 'A number from 0 to 100.')
   .action(async (percentage) => {
-    await send('/scroll-to', 'POST', { percentage });
-    console.log(`Scrolled to ${percentage}%.`);
+    try {
+      await send('/scroll-to', 'POST', { percentage });
+      console.log(`Scrolled to ${percentage}%.`);
+    } catch (error) {
+      console.error('Error scrolling:', error);
+    }
   });
 
 program
@@ -153,8 +171,12 @@ program
   .argument('<selectorOrId>', 'The CSS selector or node ID for the input field.')
   .argument('<text>', 'The text to fill the field with.')
   .action(async (selector, text) => {
-    await send('/fill', 'POST', { selector, text });
-    console.log('Filled', selector);
+    try {
+      await send('/fill', 'POST', { selector, text });
+      console.log('Filled', selector);
+    } catch (error) {
+      console.error('Error filling field:', error);
+    }
   });
 
 program
@@ -168,8 +190,12 @@ program
       console.error(`Error: Environment variable "${envVar}" is not set.`);
       return;
     }
-    await send('/fill-secret', 'POST', { selector, secret });
-    console.log('Filled secret value into', selector);
+    try {
+      await send('/fill-secret', 'POST', { selector, secret });
+      console.log('Filled secret value into', selector);
+    } catch (error) {
+      console.error('Error filling secret field:', error);
+    }
   });
 
 program
@@ -178,8 +204,12 @@ program
   .argument('<selectorOrId>', 'The CSS selector or node ID for the input field.')
   .argument('<text>', 'The text to type into the field.')
   .action(async (selector, text) => {
-    await send('/type', 'POST', { selector, text });
-    console.log('Typed text into', selector);
+    try {
+      await send('/type', 'POST', { selector, text });
+      console.log('Typed text into', selector);
+    } catch (error) {
+      console.error('Error typing into field:', error);
+    }
   });
 
 program
@@ -187,24 +217,36 @@ program
   .description("Simulate a single key press (e.g., 'Enter', 'Tab').")
   .argument('<key>', "The key to press, as defined in Playwright's documentation.")
   .action(async (key) => {
-    await send('/press', 'POST', { key });
-    console.log('Pressed', key);
+    try {
+      await send('/press', 'POST', { key });
+      console.log('Pressed', key);
+    } catch (error) {
+      console.error('Error pressing key:', error);
+    }
   });
 
 program
   .command('nextChunk')
   .description('Scroll down by one viewport height to view the next chunk of content.')
   .action(async () => {
-    await send('/next-chunk', 'POST');
-    console.log('Scrolled to the next chunk.');
+    try {
+      await send('/next-chunk', 'POST');
+      console.log('Scrolled to the next chunk.');
+    } catch (error) {
+      console.error('Error scrolling to next chunk:', error);
+    }
   });
 
 program
   .command('prevChunk')
   .description('Scroll up by one viewport height to view the previous chunk of content.')
   .action(async () => {
-    await send('/prev-chunk', 'POST');
-    console.log('Scrolled to the previous chunk.');
+    try {
+      await send('/prev-chunk', 'POST');
+      console.log('Scrolled to the previous chunk.');
+    } catch (error) {
+      console.error('Error scrolling to previous chunk:', error);
+    }
   });
 
 program
@@ -212,16 +254,24 @@ program
   .description('Click an element matching the specified CSS selector.')
   .argument('<selectorOrId>', 'The CSS selector or node ID for the element to click.')
   .action(async (selector) => {
-    await send('/click', 'POST', { selector });
-    console.log('Clicked', selector);
+    try {
+      await send('/click', 'POST', { selector });
+      console.log('Clicked', selector);
+    } catch (error) {
+      console.error('Error clicking element:', error);
+    }
   });
 
 program
   .command('screenshot')
   .description('Capture a screenshot of the current page and save it to a temporary file.')
   .action(async () => {
-    const file = await send('/screenshot');
-    console.log('Screenshot saved to:', file);
+    try {
+      const file = await send('/screenshot');
+      console.log('Screenshot saved to:', file);
+    } catch (error) {
+      console.error('Error taking screenshot:', error);
+    }
   });
 
 program
@@ -229,24 +279,28 @@ program
   .description('Output the full HTML source of the current page (paginated, 5000 chars per page).')
   .option('-p, --page <number>', 'Page number to view', '1')
   .action(async (opts) => {
-    const page = Number(opts.page) || 1;
-    const html = await send(`/html?page=${page}`);
-    if (html.length === 0) {
-      console.log('No HTML content found for this page.');
-      return;
-    }
-    const PAGE_SIZE = 5000;
-    const totalPages = Math.ceil(html.length / PAGE_SIZE);
-    const start = (page - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    const chunk = html.slice(start, end);
-    console.log(chunk);
-    console.log(`\n--- Page ${page} of ${totalPages} ---`);
-    if (totalPages > 1) {
-      console.log('Use --page <n> to view a different page.');
-    }
-    if (html.length > PAGE_SIZE) {
-      console.log('Hint: If the HTML is too large to view comfortably, try the "view-tree" command for a structured overview.');
+    try {
+      const page = Number(opts.page) || 1;
+      const html = await send(`/html?page=${page}`);
+      if (html.length === 0) {
+        console.log('No HTML content found for this page.');
+        return;
+      }
+      const PAGE_SIZE = 5000;
+      const totalPages = Math.ceil(html.length / PAGE_SIZE);
+      const start = (page - 1) * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const chunk = html.slice(start, end);
+      console.log(chunk);
+      console.log(`\n--- Page ${page} of ${totalPages} ---`);
+      if (totalPages > 1) {
+        console.log('Use --page <n> to view a different page.');
+      }
+      if (html.length > PAGE_SIZE) {
+        console.log('Hint: If the HTML is too large to view comfortably, try the "view-tree" command for a structured overview.');
+      }
+    } catch (error) {
+      console.error('Error viewing HTML:', error);
     }
   });
 
@@ -255,34 +309,50 @@ program
   .alias('hist')
   .description('Display the history of actions performed in the current session.')
   .action(async () => {
-    const hist = await send('/history');
-    console.log(hist);
+    try {
+      const hist = await send('/history');
+      console.log(hist);
+    } catch (error) {
+      console.error('Error viewing history:', error);
+    }
   });
 
 program
   .command('clear-history')
   .description("Clear the session's action history.")
   .action(async () => {
-    await send('/history/clear', 'POST');
-    console.log('History cleared.');
+    try {
+      await send('/history/clear', 'POST');
+      console.log('History cleared.');
+    } catch (error) {
+      console.error('Error clearing history:', error);
+    }
   });
   
 program
   .command('view-tree')
   .description("Display a hierarchical tree of the page's accessibility and DOM nodes.")
   .action(async () => {
-    const tree = await send('/tree');
-    console.log(tree);
+    try {
+      const tree = await send('/tree');
+      console.log(tree);
+    } catch (error) {
+      console.error('Error viewing tree:', error);
+    }
   });
 
 program
   .command('tabs')
   .description('List all open tabs (pages) in the browser daemon.')
   .action(async () => {
-    const tabs = JSON.parse(await send('/tabs'));
-    tabs.forEach(tab => {
-      console.log(`${tab.isActive ? '*' : ' '}${tab.index}: ${tab.title} (${tab.url})`);
-    });
+    try {
+      const tabs = JSON.parse(await send('/tabs'));
+      tabs.forEach(tab => {
+        console.log(`${tab.isActive ? '*' : ' '}${tab.index}: ${tab.title} (${tab.url})`);
+      });
+    } catch (error) {
+      console.error('Error listing tabs:', error);
+    }
   });
 
 program
@@ -290,8 +360,12 @@ program
   .description('Switch to a different open tab by its index.')
   .argument('<index>', 'The index of the tab to switch to.')
   .action(async (index) => {
-    await send('/tabs/switch', 'POST', { index: Number(index) });
-    console.log('Switched to tab', index);
+    try {
+      await send('/tabs/switch', 'POST', { index: Number(index) });
+      console.log('Switched to tab', index);
+    } catch (error) {
+      console.error('Error switching tab:', error);
+    }
   });
 
 program.parse();
