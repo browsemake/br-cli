@@ -41,6 +41,6 @@ jobs:
           git push
 
       - run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}
-      - run: npm publish --tag alpha
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
