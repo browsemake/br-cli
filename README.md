@@ -2,12 +2,12 @@
 `br` is a LLM friendly command line tool to control background browser in daemon mode. It can be called by [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) easily for agentic tasks
 
 Feature includes but not limited to:
-- Comprehensive action for browser automation (navigation, click, etc.)
-- LLM friendly command output with error correction hint
-- Always-on daemon mode so it lives across multiple LLM sessions
-- Accessibility tree view for easier LLM interpretation than HTML
-- Secret management to isolate password from LLM
-- History tracking for replay and scripting
+- **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
+- **LLM friendly output**: LLM friendly command output with error correction hint
+- **Daemon mode**: Always-on daemon mode so it lives across multiple LLM sessions
+- **Structured web page view**: Accessibility tree view for easier LLM interpretation than HTML
+- **Secrete management**: Secret management to isolate password from LLM
+- **History tracking**: History tracking for replay and scripting
 
 ## Usage
 Install the CLI:
