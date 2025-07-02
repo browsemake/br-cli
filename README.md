@@ -1,5 +1,5 @@
 # br-cli
-A command line tool to control background browser in daemon mode. Can be seamless integrated with claude code or gemini cli
+A LLM friendly command line tool to control background browser in daemon mode. Can be seamless integrated with [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 
 ## Usage
 Install dependencies (requires Node.js 18+). After installing the CLI you must
