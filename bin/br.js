@@ -32,7 +32,7 @@ function send(path, method = 'GET', body) {
       res.on('data', chunk => out += chunk);
       res.on('end', () => resolve(out));
     });
-    req.on('error', reject);
+    req.on('error', (e) => console.error(e.message));
     if (data) req.write(data);
     req.end();
   });
@@ -253,7 +253,6 @@ program
   .command('view-tree')
   .description("Display a hierarchical tree of the page's accessibility and DOM nodes.")
   .action(async () => {
-    await send('/goto', 'POST', { url: 'about:blank' }); // Ensure a page is loaded
     const tree = await send('/tree');
     console.log(tree);
   });
