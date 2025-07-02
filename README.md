@@ -18,7 +18,7 @@ npm install -g @browsemake/br-cli
 
 Then open your favorite LLM tools (Claude Code, Gemini CLI) and prompt to use `br`:
 
-```bash
+```
 You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
 ```
 
