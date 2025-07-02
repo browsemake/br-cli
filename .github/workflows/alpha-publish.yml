@@ -30,14 +30,13 @@ jobs:
           mv package.json.tmp package.json
           echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: bump version to ${{ steps.bump.outputs.new_version }}"
-          branch: "bump-version-${{ steps.bump.outputs.new_version }}"
-          title: "chore: bump version to ${{ steps.bump.outputs.new_version }}"
-          body: "Automated version bump to ${{ steps.bump.outputs.new_version }}."
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }}" || echo "No changes to commit"
+          git push
 
       - run: npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}
       - run: npm publish --tag alpha
