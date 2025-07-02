@@ -223,6 +223,8 @@ function record(action, args = {}) {
     try {
       const page = getActivePage();
       const session = await page.context().newCDPSession(page);
+      await session.send('DOM.enable');
+      await session.send('Accessibility.enable');
       const { nodes: axNodes } = await session.send('Accessibility.getFullAXTree');
       const { nodes: domNodes } = await session.send('DOM.getFlattenedDocument', { depth: -1, pierce: true });
       await session.detach();
@@ -243,6 +245,10 @@ function record(action, args = {}) {
       function computeXPath(node) {
         if (!node.parentId) return `/${node.nodeName.toLowerCase()}`;
         const parent = domMap.get(node.parentId);
+        if (!parent) {
+          // If parent is not found, return a simplified XPath for the current node
+          return `//${node.nodeName.toLowerCase()}`;
+        }
         const siblings = parent.children.filter(c => c.nodeName === node.nodeName);
         const index = siblings.indexOf(node) + 1;
         return computeXPath(parent) + `/${node.nodeName.toLowerCase()}[${index}]`;
@@ -278,7 +284,7 @@ function record(action, args = {}) {
       const tree = buildTree(rootAx.nodeId, 0);
       res.json({ tree, idToXPath });
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).send(err.message + " " + err.stack);
     }
   });
 

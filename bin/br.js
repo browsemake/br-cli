@@ -253,8 +253,15 @@ program
   .command('view-tree')
   .description("Display a hierarchical tree of the page's accessibility and DOM nodes.")
   .action(async () => {
-    const { tree } = await send('/tree');
-    console.log(tree);
+    try {
+      const treeData = await send('/tree');
+      console.log(treeData);
+    } catch (err) {
+      console.error('Error fetching tree:', err.message);
+      if (err.stack) {
+        console.error(err.stack);
+      }
+    }
   });
 
 program
