@@ -27,7 +27,7 @@ br start
 br goto https://github.com/
 ```
 
-But more importantly, use your favorite LLM tools (Claude Code, Gemini CLI) to leverage `br` with prompt:
+But more importantly, use in Claude Code / Gemini CLI via prompt:
 
 ```
 > You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
