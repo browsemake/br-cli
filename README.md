@@ -20,7 +20,14 @@ Install the CLI:
 npm install -g @browsemake/br-cli
 ```
 
-Then open your favorite LLM tools (Claude Code, Gemini CLI) and prompt to use `br`:
+Then you can call command line tool locally
+
+```bash
+br start
+br goto https://github.com/
+```
+
+But more importantly, use your favorite LLM tools (Claude Code, Gemini CLI) to leverage `br` with prompt:
 
 ```
 You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
