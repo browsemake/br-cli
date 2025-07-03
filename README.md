@@ -1,7 +1,7 @@
 # br-cli (Browser CLI)
 `br` is a AI friendly command line tool for browser automation. It can be directly used by [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) for agentic tasks.
 
-**Why need another browser automation? Why CLI?** Current AI agent cannot control local browser easily, thus cannot perform many personal assistant task that requires login or minimum interaction from users. br-cli helps fill the gap, so that agent does not need a rigid workflow but can still plan for browser automation. The workflow is also recored and can be replayed for future use.
+**Why need another browser automation? Why CLI?** Current AI agent cannot control local browser easily, thus making many personal tasks impossible (For example, login or captcha). br-cli fills the gap by providing agent the CLI to control browser with session management. This way agent can still plan while use browser almost like human. The workflow is also recored and can be replayed for future use.
 
 ![browsemake_cliscreen](https://github.com/user-attachments/assets/44e7bd82-465e-4150-b9af-2af412bb6eed)
 
