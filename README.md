@@ -20,7 +20,7 @@ Install the CLI:
 npm install -g @browsemake/br-cli
 ```
 
-Then you can call command line tool locally
+Then manually use via:
 
 ```bash
 br start
