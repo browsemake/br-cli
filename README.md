@@ -3,6 +3,8 @@
 
 **Why need another browser automation? Why CLI?** Current AI agent cannot control local browser easily, thus cannot perform many personal assistant task that requires login or minimum interaction from users. br-cli helps fill the gap, so that agent does not need a rigid workflow but can still plan for browser automation. The workflow is also recored and can be replayed for future use.
 
+![browsemake_cliscreen](https://github.com/user-attachments/assets/44e7bd82-465e-4150-b9af-2af412bb6eed)
+
 Features:
 - **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
 - **LLM friendly output**: LLM friendly command output with error correction hint
