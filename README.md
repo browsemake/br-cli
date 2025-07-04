@@ -3,7 +3,12 @@
 
 **Why need another browser automation? Why CLI?** Current AI agent cannot control local browser easily, thus making many personal tasks impossible (For example, login or captcha). br-cli fills the gap by providing agent the CLI to control browser with session management. This way agent can still plan while use browser almost like human. The workflow is also recored and can be replayed for future use.
 
-![browsemake_cliscreen](https://github.com/user-attachments/assets/44e7bd82-465e-4150-b9af-2af412bb6eed)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1a1c2a1c-89f0-4cc4-bdf7-5b956f3ba5da" width="45%">
+  &nbsp; &nbsp;
+  <img src="https://github.com/user-attachments/assets/44e7bd82-465e-4150-b9af-2af412bb6eed" width="45%">
+</div>
+
 
 Features:
 - **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
