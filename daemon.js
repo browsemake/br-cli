@@ -18,15 +18,48 @@ function record(action, args = {}) {
 (async () => {
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
-  let pages = [await context.newPage()];
-  let activePageIndex = 0;
+  let pages = [];
+  let activePage;
+
+  const initialPage = await context.newPage();
+  pages.push(initialPage);
+  activePage = initialPage;
 
   function getActivePage() {
-    return pages[activePageIndex];
+    return activePage;
   }
 
-  context.on('page', newPage => {
-    pages.push(newPage);
+  context.on('page', async newPage => {
+    pages = await context.pages();
+    activePage = newPage; // Set newly opened page as active
+  });
+
+  context.on('framenavigated', async frame => {
+    if (frame === activePage.mainFrame()) {
+      // The active page's main frame navigated, update activePage to ensure it's still the correct reference
+      // This is a safeguard, as Playwright's page object should remain consistent across navigations
+      // but it helps to re-confirm the active page in case of complex scenarios.
+      activePage = frame.page();
+    }
+  });
+
+  context.on('close', () => {
+    // Handle context close if necessary, e.g., clean up resources
+    console.log('Browser context closed.');
+  });
+
+  browser.on('disconnected', () => {
+    console.log('Browser disconnected. Exiting daemon.');
+    process.exit(0);
+  });
+
+  // Listen for page close events
+  context.on('pageclose', closedPage => {
+    pages = pages.filter(page => page !== closedPage);
+    if (activePage === closedPage) {
+      // If the active page was closed, switch to the last remaining page or null if no pages left
+      activePage = pages.length > 0 ? pages[pages.length - 1] : null;
+    }
   });
 
   const app = express();
@@ -42,7 +75,7 @@ function record(action, args = {}) {
         index: i,
         title: await p.title(),
         url: p.url(),
-        isActive: i === activePageIndex
+        isActive: p === activePage
       })));
       res.json(tabInfo);
     } catch (err) {
@@ -55,7 +88,7 @@ function record(action, args = {}) {
     if (index === undefined || index < 0 || index >= pages.length) {
       return res.status(400).send('invalid tab index');
     }
-    activePageIndex = index;
+    activePage = pages[index];
     record('switch-tab', { index });
     res.send('ok');
   });
