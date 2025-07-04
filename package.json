@@ -1,6 +1,6 @@
 {
   "name": "@browsemake/br-cli",
-  "version": "0.1.43",
+  "version": "0.1.44",
   "type": "commonjs",
   "bin": {
     "br": "./bin/br.js"
