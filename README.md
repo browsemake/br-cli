@@ -13,7 +13,7 @@ Features:
 - **Secrete management**: Secret management to isolate password from LLM
 - **History tracking**: History tracking for replay and scripting
 
-## Installation
+## Install
 ```bash
 npm install -g @browsemake/br-cli
 ```
@@ -26,7 +26,7 @@ br start
 br goto https://github.com/
 ```
 
-Used by AI
+Used by AI:
 
 ```
 # In Gemini CLI or Claude Code:
