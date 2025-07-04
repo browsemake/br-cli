@@ -13,23 +13,23 @@ Features:
 - **Secrete management**: Secret management to isolate password from LLM
 - **History tracking**: History tracking for replay and scripting
 
-## Usage
-Install the CLI:
-
+## Installation
 ```bash
 npm install -g @browsemake/br-cli
 ```
 
-Then manually use via:
+## Usage
+Used by human:
 
 ```bash
 br start
 br goto https://github.com/
 ```
 
-But more importantly, use in Claude Code / Gemini CLI via prompt:
+Used by AI
 
 ```
+# In Gemini CLI or Claude Code:
 > You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
 ```
 
