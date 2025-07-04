@@ -327,7 +327,7 @@ If you want to use ID instead of XPath, use 60 instead of #60 or [60]`);
         const name = axNode.name?.value || '';
         const tag = domNode ? `<${domNode.nodeName.toLowerCase()}>` : '';
         let str = axNode.backendDOMNodeId
-          ? `${'  '.repeat(indent)}[${axNode.nodeId}] ${role}${tag ? ' ' + tag : ''}${name ? ': ' + name : ''}`
+          ? `${'  '.repeat(indent)}[${axNode.nodeId}] ${role}${tag ? ' ' + tag : ''}${name ? ': ' + name : ''}\n`
           : `${'  '.repeat(indent)}[${axNode.nodeId}] ${role}${tag ? ' ' + tag : ''} <no DOM>\n`;
         if (domNode && domNode.nodeId) {
           idToXPath[axNode.nodeId] = idToXPath[domNode.nodeId];
