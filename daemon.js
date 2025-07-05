@@ -15,16 +15,11 @@ function record(action, args = {}) {
   history.push({ action, args, timestamp: new Date().toISOString() });
 }
 
-const tmpStorageStateFilePath = path.join(os.tmpdir(), 'br_sstate/state.json');
+const tmpUserDataDir = path.join(os.tmpdir(), 'br_user_data');
 
 (async () => {
-  const browser = await chromium.launch({ headless: false, viewport: null });
-  var storageState = undefined;
-  if (fs.existsSync(tmpStorageStateFilePath)) {
-    const state = fs.readFileSync(tmpStorageStateFilePath);
-    storageState = JSON.parse(state);
-  }
-  const context = await browser.newContext({ storageState, viewport: null });
+  const context = await chromium.launchPersistentContext(tmpUserDataDir, { headless: false, viewport: null });
+  const browser = await context.browser();
   let pages = [];
   let activePage;
 
@@ -368,11 +363,7 @@ If you want to use ID instead of XPath, use 60 instead of #60 or [60]`);
   });
 
   async function shutdown() {
-    const sstate = await context.storageState();
-    fs.mkdirSync(path.dirname(tmpStorageStateFilePath), { recursive: true });
-    fs.writeFileSync(tmpStorageStateFilePath, JSON.stringify(sstate, null, 2));
-    console.log('Storage state saved to', tmpStorageStateFilePath);
-    await browser.close();
+    await context.close();
     process.exit(0);
   }
 
