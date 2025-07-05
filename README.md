@@ -1,26 +1,18 @@
-# browser-cli: AI browser agent that just works 
+<p align="center">
+  <img width="full" src="https://github.com/user-attachments/assets/ac1cd9e3-f811-4af7-9338-7d6d0c80fcd7" />
+</p>
 
-[![Discord](https://img.shields.io/discord/1391101800052035714?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://discord.gg/N7crMvEX)
-[![Twitter Follow](https://img.shields.io/twitter/follow/browse_make?style=social)](https://x.com/intent/user?screen_name=browse_make)
 
-`br` is a AI friendly command line tool for browser automation. It can be directly used by [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli) for agentic tasks.
-
-**Why need another browser automation? Why CLI?** Current AI agent cannot control local browser easily, thus making many personal tasks impossible (For example, login or captcha). br-cli fills the gap by providing agent the CLI to control browser with session management. This way agent can still plan while use browser almost like human. The workflow is also recored and can be replayed for future use.
+<h1 align="center">Browser CLI </h1>
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/1a1c2a1c-89f0-4cc4-bdf7-5b956f3ba5da" width="45%">
-  &nbsp; &nbsp;
-  <img src="https://github.com/user-attachments/assets/44e7bd82-465e-4150-b9af-2af412bb6eed" width="45%">
+  
+  [![Discord](https://img.shields.io/discord/1391101800052035714?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://discord.gg/N7crMvEX)
+  [![Twitter Follow](https://img.shields.io/twitter/follow/browse_make?style=social)](https://x.com/intent/user?screen_name=browse_make)
+  
 </div>
 
-
-Features:
-- **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
-- **LLM friendly output**: LLM friendly command output with error correction hint
-- **Daemon mode**: Always-on daemon mode so it lives across multiple LLM sessions
-- **Structured web page view**: Accessibility tree view for easier LLM interpretation than HTML
-- **Secrete management**: Secret management to isolate password from LLM
-- **History tracking**: History tracking for replay and scripting
+`br` is a command line tool that can be used by any capable LLM agent, like [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli).
 
 ## Install
 ```bash
@@ -42,13 +34,21 @@ Used by AI:
 > You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
 ```
 
-## Demo
+## Examples
 Example of using Gemini CLI and br-cli together to navigate to GitHub:
 <div align="center">
     <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
     </a>
 </div>
+
+## Features
+- **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
+- **LLM friendly output**: LLM friendly command output with error correction hint
+- **Daemon mode**: Always-on daemon mode so it lives across multiple LLM sessions
+- **Structured web page view**: Accessibility tree view for easier LLM interpretation than HTML
+- **Secrete management**: Secret management to isolate password from LLM
+- **History tracking**: History tracking for replay and scripting
 
 ## Command
 
