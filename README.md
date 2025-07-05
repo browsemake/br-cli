@@ -17,7 +17,7 @@
 https://www.npmjs.com/package/@browsemake/browser-cli
 
 ## Why Broswer CLI?
-- **Just works**: no complexity, just a browser tool proved to work with agent
+- **Just works**: no complexity, just simply browser automation proved to work on agent task
 - **AI first**: designed for LLM agent, readable view from HTML, and error hint
 - **Secure**: can be run locally, no credential leakage 
 - **Robust**: browser persisted progress across session, and track history action for replay
@@ -31,7 +31,7 @@ npm install -g @browsemake/browser-cli
 Used by AI:
 
 ```
-# In Gemini CLI or Claude Code:
+# In Gemini CLI / Claude Code / ChatGPT:
 > You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
 ```
 
@@ -42,13 +42,21 @@ br start
 br goto https://github.com/
 ```
 
-## Examples
-Example of using Gemini CLI and br-cli together to navigate to GitHub:
+## Demos
+Navigate to GitHub repo:
 <div align="center">
     <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
     </a>
 </div>
+
+Grocery shopping
+
+Print invoice
+
+Download bank account statement
+
+Search for job posting
 
 ## Features
 - **Browser Action**: Comprehensive action for browser automation (navigation, click, etc.)
