@@ -1,5 +1,5 @@
 {
-  "name": "@browsemake/br-cli",
+  "name": "@browsemake/browser-cli",
   "version": "0.1.47",
   "type": "commonjs",
   "bin": {
