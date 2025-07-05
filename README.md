@@ -42,12 +42,6 @@ br goto https://github.com/
 ```
 
 ## Demos
-Navigate to GitHub repo:
-<div align="center">
-    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
-    </a>
-</div>
 
 Grocery (Go to Amazon and buy me a basketball)
 <div align="center">
@@ -55,6 +49,14 @@ Grocery (Go to Amazon and buy me a basketball)
       <img style="max-width:300px;" src="https://github.com/user-attachments/assets/3cd46b9a-6ef9-4987-a952-fcd22890334c">
     </a>
 </div>
+
+Navigate to GitHub repo:
+<div align="center">
+    <a href="https://www.loom.com/share/0ef198e259864ae08afa9ae9f78acfac">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/0ef198e259864ae08afa9ae9f78acfac-3e42df07f2040874-full-play.gif">
+    </a>
+</div>
+
 
 Print invoice
 
