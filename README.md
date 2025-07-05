@@ -12,11 +12,19 @@
   
 </div>
 
-`br` is a command line tool that can be used by any capable LLM agent, like [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli).
+`br` is a command line tool used by any capable LLM agent, like ChatGPT, [Claude Code](https://github.com/anthropics/claude-code) or [Gemini CLI](https://github.com/google-gemini/gemini-cli).
+
+https://www.npmjs.com/package/@browsemake/browser-cli
+
+## Why Broswer CLI?
+- **Just works**: no complexity, just a browser tool proved to work with agent
+- **AI first**: designed for LLM agent, readable view from HTML, and error hint
+- **Secure**: can be run locally, no credential leakage 
+- **Robust**: browser persisted progress across session, and track history action for replay
 
 ## Install
 ```bash
-npm install -g @browsemake/br-cli
+npm install -g @browsemake/browser-cli
 ```
 
 ## Usage
@@ -47,7 +55,7 @@ Example of using Gemini CLI and br-cli together to navigate to GitHub:
 - **LLM friendly output**: LLM friendly command output with error correction hint
 - **Daemon mode**: Always-on daemon mode so it lives across multiple LLM sessions
 - **Structured web page view**: Accessibility tree view for easier LLM interpretation than HTML
-- **Secrete management**: Secret management to isolate password from LLM
+- **Secret management**: Secret management to isolate password from LLM
 - **History tracking**: History tracking for replay and scripting
 
 ## Command
