@@ -1,4 +1,4 @@
-# browser-cli: browser automation for AI agent that just works 
+# browser-cli: AI browser agent that just works 
 
 [![Discord](https://img.shields.io/discord/1391101800052035714?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://discord.gg/N7crMvEX)
 [![Twitter Follow](https://img.shields.io/twitter/follow/browse_make?style=social)](https://x.com/intent/user?screen_name=browse_make)
