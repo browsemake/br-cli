@@ -17,7 +17,7 @@
 https://www.npmjs.com/package/@browsemake/browser-cli
 
 ## Why Broswer CLI?
-- **Just works**: no complexity, just simply browser automation proved to work on agent task
+- **Just works**: simply browser automation, leave the rest workflow to the most powerful LLM agent
 - **AI first**: designed for LLM agent, readable view from HTML, and error hint
 - **Secure**: can be run locally, no credential passed to LLM 
 - **Robust**: browser persisted progress across session, and track history action for replay
@@ -49,7 +49,12 @@ Navigate to GitHub repo:
     </a>
 </div>
 
-Grocery shopping
+Grocery (Go to Amazon and buy me a basketball)
+<div align="center">
+    <a href="https://www.loom.com/share/556d62b36097447bb79f81a8ad87671a">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/556d62b36097447bb79f81a8ad87671a-a7b403ca37504392-full-play.gif">
+    </a>
+</div>
 
 Print invoice
 
