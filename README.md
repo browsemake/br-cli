@@ -51,8 +51,8 @@ Navigate to GitHub repo:
 
 Grocery (Go to Amazon and buy me a basketball)
 <div align="center">
-    <a href="https://www.loom.com/share/556d62b36097447bb79f81a8ad87671a">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/556d62b36097447bb79f81a8ad87671a-a7b403ca37504392-full-play.gif">
+    <a href="https://www.loom.com/share/b7aeba65bb0b4c4bb5bbef9b59b4b9dc">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/b7aeba65bb0b4c4bb5bbef9b59b4b9dc-d5766339c45d562d-full-play.gif">
     </a>
 </div>
 
