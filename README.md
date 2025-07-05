@@ -20,18 +20,18 @@ npm install -g @browsemake/br-cli
 ```
 
 ## Usage
-Used by human:
-
-```bash
-br start
-br goto https://github.com/
-```
-
 Used by AI:
 
 ```
 # In Gemini CLI or Claude Code:
 > You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
+```
+
+Or used by human:
+
+```bash
+br start
+br goto https://github.com/
 ```
 
 ## Examples
