@@ -1,4 +1,4 @@
-# br-cli (Browser CLI)
+# br-cli: browser automation for AI agent that just works 
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/browsemake?style=social)](https://x.com/intent/user?screen_name=browsemake)
 
