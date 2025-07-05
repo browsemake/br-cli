@@ -28,14 +28,13 @@ npm install -g @browsemake/browser-cli
 ```
 
 ## Usage
-Used by AI:
+Type instruction to AI agent (Gemini CLI / Claude Code / ChatGPT):
 
 ```
-# In Gemini CLI / Claude Code / ChatGPT:
-> You have browser automation tool 'br', use it to go to github and search for repo browsemake/br-cli
+> You have browser automation tool 'br', use it to go to amazon to buy me a basketball
 ```
 
-Or used by human:
+Use command line directly by human:
 
 ```bash
 br start
